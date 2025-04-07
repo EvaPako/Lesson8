@@ -5,6 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 import java.time.Duration;
@@ -17,31 +19,17 @@ public class HomeTest {
 
     @BeforeSuite
     public static void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
-        driver = new ChromeDriver(options);
+        WebDriver driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.get("https://www.mts.by/");
-        //driver.findElement(By.xpath("//*[text()='Принять']")).click();
-
-        // Создание экземпляра страницы
         homePage = new HomePage(driver);
+        homePage.acceptCookies();
 
-        driver.manage().addCookie(new Cookie("_fbp", "fb.1.1743527539961.19365594915407187"));
-        driver.manage().addCookie(new Cookie("_ga_7C99PNNT06", "GS1.1.1743527531.9.0.1743527531.60.0.0"));
-        driver.manage().addCookie(new Cookie("_ga_DNC2PBDGDP", "GS1.1.1743527531.9.0.1743527531.0.0.0"));
-        driver.manage().addCookie(new Cookie("BX_USER_ID", "66ad0f93a7a70c4401744df2df73ae77"));
-        driver.manage().addCookie(new Cookie("PHPSESSID", "SSz91H39UDpODKb0UqKjHNl1AqNPxlPw"));
-        driver.manage().addCookie(new Cookie("WEBIM_LOCALE", "ru"));
-
-        //driver.navigate().refresh();
     }
 
     @AfterSuite
     public static void tearDown() {
         if (driver != null) {
-            driver.navigate().refresh();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
             driver.quit();
         }
     }
@@ -49,31 +37,38 @@ public class HomeTest {
     @Test(priority = 0)
     public void verifyText() {
 
-        // Взаимодействие с элементами страницы через методы класса Page Object
-//        loginPage.enterUsername("testuser");
-//        loginPage.enterPassword("password123");
-//        loginPage.clickLogin();
+        WebElement webElement = homePage.getWebElement(homePage.onlinePayBlock);
+        Assert.assertEquals(webElement.getText(), "Онлайн пополнение\nбез комиссии");
 
-        //Assert.assertEquals(homePage.getWebElement(homePage.onlinePayBlock));
-        Assert.assertEquals(driver.findElement(homePage.onlinePayBlock).getText(),
-                        "Онлайн пополнение\nбез комиссии");
-
-        //Assert.assertEquals(driver.findElement(By.xpath(
-        //                "//*[@id='pay-section']/div/div/div[2]/section/div/h2")).getText(),
-        //        "Онлайн пополнение\nбез комиссии");
     }
 
-    @Test(priority = 2)
+    @Test(priority = 1)
+    public void verifyAssertTrueLogotype() {
+
+        try {
+            WebElement webElement = homePage.getWebElement(homePage.visaLogo);
+            Assert.assertTrue(webElement.isDisplayed(), "Логотип не найден: " + webElement.getText());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //driver.quit();
+        }
+    }
+
+  @Test(priority = 2)
     public void checkServiceLink() {
-
         homePage.clickAboutService();
-
         String actualUrl = driver.getCurrentUrl();
-        System.out.println(actualUrl);
         String expectedUrl = "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/";
         Assert.assertEquals(actualUrl, expectedUrl, "URL не соответствует ожидаемому");
-
         homePage.navigateBack();
+    }
 
+    @Test(priority = 3)
+    public void Input () {
+        homePage.enterPhone("+74732858585");
+        homePage.enterSum("12");
+        homePage.clickPay();
     }
 }
