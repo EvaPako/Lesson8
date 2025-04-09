@@ -2,18 +2,12 @@ package mts;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.tracing.opentelemetry.SeleniumSpanExporter;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomePage {
     private final WebDriver driver;
-        public By onlinePayBlock = By.xpath(
+    public By onlinePayBlock = By.xpath(
             "//*[@id='pay-section']//h2");
 
     private final By buttonCookieAgree = By.id("cookie-agree");
@@ -24,12 +18,21 @@ public class HomePage {
     public By MasterCardSCLogo = By.cssSelector("img[alt='MasterCard Secure Code']");
     public By belcardLogo = By.cssSelector("img[alt='Белкарт']");
 
+
+    public final By [] paymentLogos = {
+            visaLogo,
+            vByVisaLogo,
+            masterCardLogo,
+            MasterCardSCLogo,
+            belcardLogo};
+
+
+
     private final By ServiceInfo = By.linkText("Подробнее о сервисе");
 
-    private final By phoneField = By.xpath("//*[@class='phone']");
+    private final By phoneField = By.xpath("//*[@id='connection-phone']");
     private final By sumField = By.xpath("//*[@id='connection-sum']");
-
-    private final By payButton = By.xpath("//*[@id='connection-sum']");
+    private final By payButton = By.xpath("//*[@id='pay-connection']/button");
 
     // Конструктор
     public HomePage (WebDriver driver) {
@@ -43,7 +46,7 @@ public class HomePage {
     }
 
     public void navigateBack(){
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.navigate().back();
 
     }

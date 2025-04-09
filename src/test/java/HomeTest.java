@@ -45,9 +45,13 @@ public class HomeTest {
     @Test(priority = 1)
     public void verifyAssertTrueLogotype() {
 
+
+
         try {
-            WebElement webElement = homePage.getWebElement(homePage.visaLogo);
-            Assert.assertTrue(webElement.isDisplayed(), "Логотип не найден: " + webElement.getText());
+            for (By logo : homePage.paymentLogos) {
+            WebElement logoElement = homePage.getWebElement(logo);
+            Assert.assertTrue(logoElement.isDisplayed(), "Логотип не найден: " + logo);
+        }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +71,7 @@ public class HomeTest {
 
     @Test(priority = 3)
     public void Input () {
-        homePage.enterPhone("+74732858585");
+        homePage.enterPhone("297777777");
         homePage.enterSum("12");
         homePage.clickPay();
     }
