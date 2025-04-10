@@ -43,9 +43,7 @@ public class HomeTest {
     }
 
     @Test(priority = 1)
-    public void verifyAssertTrueLogotype() {
-
-
+    public void verifyLogotype() {
 
         try {
             for (By logo : homePage.paymentLogos) {
@@ -55,8 +53,7 @@ public class HomeTest {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            //driver.quit();
+            driver.quit();
         }
     }
 
@@ -72,7 +69,35 @@ public class HomeTest {
     @Test(priority = 3)
     public void Input () {
         homePage.enterPhone("297777777");
-        homePage.enterSum("12");
+        homePage.enterSum("250");
+        homePage.clickPay();
+    }
+
+    @Test(priority = 4)
+    public void testPlaceHolders(){
+
+        try {
+            for (String[] element : homePage.elementsPayForm) {
+                WebElement inputField = homePage.getWebElement(By.id(element[0]));
+                String placeholderValue = inputField.getAttribute("placeholder");
+                Assert.assertEquals(placeholderValue, element[1], "У элемента " + element[0] + " надпись незаполненого поля не соответствует ожидаемому");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            driver.quit();
+        }
+    }
+
+    @Test(priority = 5)
+    public void checkFrame () {
+
+        //Выбираем Услуги связи
+        homePage.enterPhone("297777777");
+        homePage.enterSum("250");
         homePage.clickPay();
     }
 }
+
+
+
