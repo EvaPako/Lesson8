@@ -13,7 +13,7 @@ import java.time.Duration;
 import mts.HomePage;
 
 public class HomeTest {
-    private static WebDriver driver;
+    public static WebDriver driver;
     private static HomePage homePage;
 
 
@@ -31,6 +31,9 @@ public class HomeTest {
     public static void tearDown() {
         if (driver != null) {
             driver.quit();
+        }
+        if (homePage.driver != null){
+            homePage.driver.quit();
         }
     }
 
@@ -60,7 +63,7 @@ public class HomeTest {
   @Test(priority = 2)
     public void checkServiceLink() {
         homePage.clickAboutService();
-        String actualUrl = driver.getCurrentUrl();
+        String actualUrl = homePage.driver.getCurrentUrl();
         String expectedUrl = "https://www.mts.by/help/poryadok-oplaty-i-bezopasnost-internet-platezhey/";
         Assert.assertEquals(actualUrl, expectedUrl, "URL не соответствует ожидаемому");
         homePage.navigateBack();
@@ -90,12 +93,45 @@ public class HomeTest {
     }
 
     @Test(priority = 5)
-    public void checkFrame () {
+    public void checkFrame() {
+
+        String sum = "250.00";
+        String phoneNumber = "297777777";
 
         //Выбираем Услуги связи
-        homePage.enterPhone("297777777");
-        homePage.enterSum("250");
+        homePage.enterPhone(phoneNumber);
+        homePage.enterSum(sum);
         homePage.clickPay();
+
+        //Ожидание открытия окна оплаты
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        //Переключаемся на фрейм
+        WebElement frame1 = homePage.getWebElement(By.className("bepaid-iframe"));
+        homePage.driver.switchTo().frame(frame1);
+
+        //Проверяем отображение суммы, номера телефона и т.д.
+        String actualSumFrame = homePage.getWebElement(homePage.sumFrame).getText();
+        Assert.assertEquals(actualSumFrame, sum + " BYN", "В окне оплаты сумма отображается неверно");
+
+        String actualButtonSumFrame = homePage.getWebElement(homePage.sumButtonFrame).getText();
+        Assert.assertEquals(actualButtonSumFrame, "Оплатить " + sum + " BYN", "В окне оплаты сумма на кнопке отображается неверно");
+
+        String actualPhoneNumberFrame = homePage.getWebElement(homePage.phoneNumberFrame).getText();
+        Assert.assertEquals(actualPhoneNumberFrame, "Оплата: Услуги связи Номер:375" + phoneNumber, "В окне оплаты сумма отображается неверно");
+
+        String actualСardNumberFrame = homePage.getWebElement(homePage.cardNumberFrame).getText();
+        Assert.assertEquals(actualСardNumberFrame, "Номер карты", "Отображается неверно");
+
+        String actualSrokDeistvia = homePage.getWebElement(homePage.srokDeistvia).getText();
+        Assert.assertEquals(actualSrokDeistvia, "Срок действия", "Отображается неверно");
+
+        // Вернуться к основному контенту страницы:
+        homePage.driver.switchTo().defaultContent();
     }
 }
 

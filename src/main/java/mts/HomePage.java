@@ -10,7 +10,7 @@ import java.util.List;
 import static javax.swing.text.html.CSS.getAttribute;
 
 public class HomePage {
-    private final WebDriver driver;
+    public final WebDriver driver;
 
     public By onlinePayBlock = By.xpath(
             "//*[@id='pay-section']//h2");
@@ -53,11 +53,24 @@ public class HomePage {
             {"internet-sum", "Сумма"}
     };
 
+    public By sumFrame = By.cssSelector(".pay-description__cost > span");
+    public By sumButtonFrame = By.cssSelector(".card-page__card > button");
+    public By phoneNumberFrame = By.cssSelector(".pay-description__text > span");
+    public By cardNumberFrame = By.xpath("//app-card-input/form/div[1]/div[1]/app-input/div/div/div[1]/label");
+    public By srokDeistvia = By.xpath("//app-card-input/form/div[1]/div[2]/div[1]/app-input/div/div/div[1]/label");
+
+    private final By payDescriptionCost = By.xpath("//*[@class='pay-connection']/button");
+
     public HomePage (WebDriver driver) {
         this.driver = driver;
     }
 
     public void acceptCookies(){
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         WebElement cook = driver.findElement(buttonCookieAgree);
         if (cook.isDisplayed()){
             cook.click();
@@ -93,6 +106,7 @@ public class HomePage {
     public void navigateBack(){
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.navigate().back();
+        //acceptCookies();
 
     }
 
